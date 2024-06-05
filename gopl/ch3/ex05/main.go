@@ -8,6 +8,15 @@ import (
 	"os"
 )
 
+var palette = []color.Color{
+	color.RGBA{0xf4, 0x43, 0x36, 0xff}, // Material Red
+	color.RGBA{0xff, 0xff, 0xff, 0xff}, // White
+	color.RGBA{0x4c, 0xaf, 0x50, 0xff}, // Material Green
+	color.RGBA{0xff, 0xff, 0xff, 0xff}, // White
+	color.RGBA{0x21, 0x96, 0xf3, 0xff}, // Material Blue
+	color.RGBA{0xff, 0xff, 0xff, 0xff}, // White
+}
+
 func main() {
 	const (
 		xmin, ymin, xmax, ymax = -2, -2, +2, +2
@@ -29,13 +38,12 @@ func main() {
 
 func mandelbrot(z complex128) color.Color {
 	const iterations = 200
-	const contrast = 15
 
 	var v complex128
-	for n := uint8(0); n < iterations; n++ {
+	for n := 0; n < iterations; n++ {
 		v = v*v + z
 		if cmplx.Abs(v) > 2 {
-			return color.Gray{255 - contrast*n}
+			return palette[n%len(palette)]
 		}
 	}
 	return color.Black
