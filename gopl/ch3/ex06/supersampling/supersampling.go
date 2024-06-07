@@ -2,7 +2,7 @@ package supersampling
 
 import "image/color"
 
-func supersampling(colors []color.Color) color.Color {
+func Supersampling(colors []color.Color) color.Color {
 	var r, g, b, a float64
 
 	for _, color := range colors {
