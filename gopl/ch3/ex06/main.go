@@ -6,6 +6,8 @@ import (
 	"image/png"
 	"math/cmplx"
 	"os"
+
+	"github.com/Phrog195/Golang/gopl/ch3/ex06/supersampling"
 )
 
 var palette = []color.Color{
@@ -32,12 +34,23 @@ func main() {
 
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
 	for py := 0; py < height; py++ {
-		y := float64(py)/height*(ymax-ymin) + ymin
+		y0 := (float64(py)+0.5)/height*(ymax-ymin) + ymin
+		y1 := (float64(py)-0.5)/height*(ymax-ymin) + ymin
 		for px := 0; px < width; px++ {
-			x := float64(px)/width*(xmax-xmin) + xmin
-			z := complex(x, y)
+			x0 := (float64(px)+0.5)/width*(xmax-xmin) + xmin
+			x1 := (float64(px)-0.5)/width*(xmax-xmin) + xmin
+			z1 := complex(x0, y0)
+			z2 := complex(x1, y0)
+			z3 := complex(x0, y1)
+			z4 := complex(x1, y1)
+			color := supersampling.Supersampling([]color.Color{
+				mandelbrot(z1),
+				mandelbrot(z2),
+				mandelbrot(z3),
+				mandelbrot(z4),
+			})
 			// Image point (px, py) represents complex value z.
-			img.Set(px, py, mandelbrot(z))
+			img.Set(px, py, color)
 		}
 	}
 	png.Encode(os.Stdout, img) // NOTE: ignoring errors
@@ -54,4 +67,16 @@ func mandelbrot(z complex128) color.Color {
 		}
 	}
 	return color.Black
+
+	// const iterations = 200
+	// const contrast = 15
+
+	// var v complex128
+	// for n := uint8(0); n < iterations; n++ {
+	// 	v = v*v + z
+	// 	if cmplx.Abs(v) > 2 {
+	// 		return color.Gray{255 - contrast*n}
+	// 	}
+	// }
+	// return color.Black
 }
